@@ -14,7 +14,7 @@ const getClothingItems = (req, res) => {
 };
 
 const getClothingItem = (req, res) => {
-  const itemId = req.params.itemId;
+  const { itemId } = req.params;
   clothingItem
     .findById(itemId)
     .orFail()
