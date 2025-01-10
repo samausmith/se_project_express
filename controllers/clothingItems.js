@@ -1,5 +1,7 @@
+// const mongoose = require("mongoose");
+
 const clothingItem = require("../models/clothingItem");
-const mongoose = require("mongoose");
+
 const errorHandler = require("../utils/errors");
 
 const getClothingItems = (req, res) => {
@@ -31,10 +33,10 @@ const getClothingItem = (req, res) => {
 };
 
 const createClothingItem = (req, res) => {
-  const { name, weather, imageUrl, owner } = req.body;
+  const { name, weather, imageUrl } = req.body;
 
   clothingItem
-    .create({ name, weather, imageUrl, owner: "677ba17fdc1fd787801bba6f" })
+    .create({ name, weather, imageUrl, owner: req.user._id })
     .then((data) => res.status(201).send(data))
     .catch((err) => {
       errorHandler({ err, id: null, res });
@@ -69,7 +71,6 @@ const likeItem = (req, res) => {
   //   res.status(500).send({ message: err.message });
   // });
 };
-//...
 
 const dislikeItem = (req, res) => {
   clothingItem

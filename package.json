@@ -25,10 +25,10 @@
     "validator": "^13.12.0"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5",
     "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-import": "^2.31.0",
     "nodemon": "^3.1.9",
     "prettier": "^2.8.8"
   }
