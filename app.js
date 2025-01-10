@@ -11,11 +11,18 @@ mongoose
   })
   .catch(console.error);
 
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
 app.use(express.json());
-app.use("/", mainRouter);
+app.use(express.urlencoded({ extended: true }));
+
 app.use((req, res, next) => {
   req.user = {
-    _id: "677ba17fdc1fd787801bba6f",
+    _id: "6780d5551dd815687b049cd0",
   };
   next();
 });
+
+app.use("/", mainRouter);
