@@ -1,13 +1,13 @@
 const clothingItem = require("../models/clothingItem");
 const mongoose = require("mongoose");
+const errorHandler = require("../utils/errors");
 
 const getClothingItems = (req, res) => {
   clothingItem
     .find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      console.error(err);
-      res.status(500).send({ message: err.message });
+      errorHandler({ err, id: null, res });
     });
 };
 
@@ -18,13 +18,16 @@ const getClothingItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      if (!mongoose.Types.ObjectId.isValid(itemId)) {
-        res.status(400).send({ message: "Invalid item ID" });
-      } else {
-        res.status(404).send({ message: "Item ID not found" });
-      }
-      res.status(500).send({ message: err.message });
+      errorHandler({ err, id: null, res });
     });
+  // .catch((err) => {
+  //   if (!mongoose.Types.ObjectId.isValid(itemId)) {
+  //     res.status(400).send({ message: "Invalid item ID" });
+  //   } else {
+  //     res.status(404).send({ message: "Item ID not found" });
+  //   }
+  //   res.status(500).send({ message: err.message });
+  // });
 };
 
 const createClothingItem = (req, res) => {
@@ -34,12 +37,15 @@ const createClothingItem = (req, res) => {
     .create({ name, weather, imageUrl, owner: "677ba17fdc1fd787801bba6f" })
     .then((data) => res.status(201).send(data))
     .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        res.status(400).send({ message: err.message });
-      }
-      res.status(500).send({ message: err.message });
+      errorHandler({ err, id: null, res });
     });
+  // .catch((err) => {
+  //   console.error(err);
+  //   if (err.name === "ValidationError") {
+  //     res.status(400).send({ message: err.message });
+  //   }
+  //   res.status(500).send({ message: err.message });
+  // });
 };
 
 const likeItem = (req, res) => {
@@ -52,13 +58,16 @@ const likeItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
-        res.status(400).send({ message: "Invalid item ID" });
-      } else {
-        res.status(404).send({ message: "Item ID not found" });
-      }
-      res.status(500).send({ message: err.message });
+      errorHandler({ err, id: null, res });
     });
+  // .catch((err) => {
+  //   if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
+  //     res.status(400).send({ message: "Invalid item ID" });
+  //   } else {
+  //     res.status(404).send({ message: "Item ID not found" });
+  //   }
+  //   res.status(500).send({ message: err.message });
+  // });
 };
 //...
 
@@ -72,13 +81,16 @@ const dislikeItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
-        res.status(400).send({ message: "Invalid item ID" });
-      } else {
-        res.status(404).send({ message: "Item ID not found" });
-      }
-      res.status(500).send({ message: err.message });
+      errorHandler({ err, id: null, res });
     });
+  // .catch((err) => {
+  //   if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
+  //     res.status(400).send({ message: "Invalid item ID" });
+  //   } else {
+  //     res.status(404).send({ message: "Item ID not found" });
+  //   }
+  //   res.status(500).send({ message: err.message });
+  // });
 };
 
 module.exports = {

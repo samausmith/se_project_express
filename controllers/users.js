@@ -1,13 +1,17 @@
 const User = require("../models/user");
 const mongoose = require("mongoose");
+const errorHandler = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((err) => {
-      console.error(err);
-      res.status(500).send({ message: err.message });
+      errorHandler({ err, id: null, res });
     });
+  // .catch((err) => {
+  //   console.error(err);
+  //   res.status(500).send({ message: err.message });
+  // });
 };
 
 module.exports.getUser = (req, res) => {
@@ -15,13 +19,16 @@ module.exports.getUser = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
-        res.status(400).send({ message: "Invalid user ID" });
-      } else {
-        res.status(404).send({ message: "User ID not found" });
-      }
-      res.status(500).send({ message: err.message });
+      errorHandler({ err, id: null, res });
     });
+  // .catch((err) => {
+  //   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+  //     res.status(400).send({ message: "Invalid user ID" });
+  //   } else {
+  //     res.status(404).send({ message: "User ID not found" });
+  //   }
+  //   res.status(500).send({ message: err.message });
+  // });
 };
 
 module.exports.createUser = (req, res) => {
@@ -30,11 +37,14 @@ module.exports.createUser = (req, res) => {
   User.create({ name, avatar })
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      const status = err.status;
-      console.log(status);
-      if (err.name === "ValidationError") {
-        res.status(400).send({ message: err.message, status });
-      }
-      res.status(500).send({ message: err.message });
+      errorHandler({ err, id: null, res });
     });
+  // .catch((err) => {
+  //   const status = err.status;
+  //   console.log(status);
+  //   if (err.name === "ValidationError") {
+  //     res.status(400).send({ message: err.message, status });
+  //   }
+  //   res.status(500).send({ message: err.message });
+  // });
 };

@@ -1,4 +1,6 @@
-const handleError = (err, id) => {
+const mongoose = require("mongoose");
+
+const errorHandler = ({ err, id, res }) => {
   console.error(err);
   if (err.name === "ValidationError") {
     res.status(400).send({ message: err.message });
@@ -10,6 +12,4 @@ const handleError = (err, id) => {
   res.status(500).send({ message: err.message });
 };
 
-// DocumentNotFoundError = 400
-
-//4
+module.exports = errorHandler;
