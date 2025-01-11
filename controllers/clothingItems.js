@@ -2,14 +2,14 @@
 
 const clothingItem = require("../models/clothingItem");
 
-const errorHandler = require("../utils/errors");
+const errorHandler = require("../utils/errorHandler");
 
 const getClothingItems = (req, res) => {
   clothingItem
     .find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      errorHandler({ err, id: null, res });
+      errorHandler({ err, res });
     });
 };
 
@@ -20,7 +20,7 @@ const getClothingItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      errorHandler({ err, id: null, res });
+      errorHandler({ err, res });
     });
   // .catch((err) => {
   //   if (!mongoose.Types.ObjectId.isValid(itemId)) {
@@ -39,7 +39,7 @@ const createClothingItem = (req, res) => {
     .create({ name, weather, imageUrl, owner: req.user._id })
     .then((data) => res.status(201).send(data))
     .catch((err) => {
-      errorHandler({ err, id: null, res });
+      errorHandler({ err, res });
     });
   // .catch((err) => {
   //   console.error(err);
@@ -48,6 +48,17 @@ const createClothingItem = (req, res) => {
   //   }
   //   res.status(500).send({ message: err.message });
   // });
+};
+
+const deleteClothingItem = (req, res) => {
+  const { itemId } = req.params;
+  clothingItem
+    .findByIdAndDelete(itemId)
+    .orFail()
+    .then((item) => res.status(200).send(item))
+    .catch((err) => {
+      errorHandler({ err, res });
+    });
 };
 
 const likeItem = (req, res) => {
@@ -60,7 +71,7 @@ const likeItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      errorHandler({ err, id: null, res });
+      errorHandler({ err, res });
     });
   // .catch((err) => {
   //   if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
@@ -82,7 +93,7 @@ const dislikeItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      errorHandler({ err, id: null, res });
+      errorHandler({ err, res });
     });
   // .catch((err) => {
   //   if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
@@ -98,6 +109,7 @@ module.exports = {
   getClothingItems,
   getClothingItem,
   createClothingItem,
+  deleteClothingItem,
   likeItem,
   dislikeItem,
 };

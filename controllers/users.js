@@ -2,13 +2,13 @@
 
 const User = require("../models/user");
 
-const errorHandler = require("../utils/errors");
+const errorHandler = require("../utils/errorHandler");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((err) => {
-      errorHandler({ err, id: null, res });
+      errorHandler({ err, res });
     });
   // .catch((err) => {
   //   console.error(err);
@@ -21,7 +21,7 @@ module.exports.getUser = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      errorHandler({ err, id: null, res });
+      errorHandler({ err, res });
     });
   // .catch((err) => {
   //   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
@@ -39,7 +39,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, avatar })
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      errorHandler({ err, id: null, res });
+      errorHandler({ err, res });
     });
   // .catch((err) => {
   //   const status = err.status;
