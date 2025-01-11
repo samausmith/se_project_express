@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("./errors");
 
 const errorHandler = ({ err, res }) => {
