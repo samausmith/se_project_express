@@ -1,5 +1,3 @@
-// const mongoose = require("mongoose");
-
 const clothingItem = require("../models/clothingItem");
 
 const errorHandler = require("../utils/errorHandler");
@@ -22,40 +20,39 @@ const getClothingItem = (req, res) => {
     .catch((err) => {
       errorHandler({ err, res });
     });
-  // .catch((err) => {
-  //   if (!mongoose.Types.ObjectId.isValid(itemId)) {
-  //     res.status(400).send({ message: "Invalid item ID" });
-  //   } else {
-  //     res.status(404).send({ message: "Item ID not found" });
-  //   }
-  //   res.status(500).send({ message: err.message });
-  // });
 };
 
 const createClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
+  const owner = req.user;
 
   clothingItem
-    .create({ name, weather, imageUrl, owner: req.user._id })
+    .create({ name, weather, imageUrl, owner })
     .then((data) => res.status(201).send(data))
     .catch((err) => {
+      console.log();
       errorHandler({ err, res });
     });
-  // .catch((err) => {
-  //   console.error(err);
-  //   if (err.name === "ValidationError") {
-  //     res.status(400).send({ message: err.message });
-  //   }
-  //   res.status(500).send({ message: err.message });
-  // });
 };
 
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
+
   clothingItem
-    .findByIdAndDelete(itemId)
+    .findById(itemId)
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => {
+      if (item.owner.toString() !== req.user._id) {
+        return Promise.reject(
+          new Error({
+            name: "ForbiddenError",
+            message: "User does not have permission to delete this item",
+          })
+        );
+      }
+      return clothingItem.findByIdAndDelete(itemId);
+    })
+    .then(() => res.status(200).send({ message: "successfully deleted item" }))
     .catch((err) => {
       errorHandler({ err, res });
     });
@@ -73,14 +70,6 @@ const likeItem = (req, res) => {
     .catch((err) => {
       errorHandler({ err, res });
     });
-  // .catch((err) => {
-  //   if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
-  //     res.status(400).send({ message: "Invalid item ID" });
-  //   } else {
-  //     res.status(404).send({ message: "Item ID not found" });
-  //   }
-  //   res.status(500).send({ message: err.message });
-  // });
 };
 
 const dislikeItem = (req, res) => {
@@ -95,14 +84,6 @@ const dislikeItem = (req, res) => {
     .catch((err) => {
       errorHandler({ err, res });
     });
-  // .catch((err) => {
-  //   if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
-  //     res.status(400).send({ message: "Invalid item ID" });
-  //   } else {
-  //     res.status(404).send({ message: "Item ID not found" });
-  //   }
-  //   res.status(500).send({ message: err.message });
-  // });
 };
 
 module.exports = {
