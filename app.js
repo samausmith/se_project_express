@@ -24,11 +24,4 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: "6780d5551dd815687b049cd0",
-//   };
-//   next();
-// });
-
 app.use("/", mainRouter);

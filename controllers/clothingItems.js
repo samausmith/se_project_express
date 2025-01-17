@@ -43,16 +43,15 @@ const deleteClothingItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
-        return Promise.reject(
-          new Error({
-            name: "ForbiddenError",
-            message: "User does not have permission to delete this item",
-          })
+        const error = new Error(
+          "User does not have permission to delete this item"
         );
+        error.name = "ForbiddenError";
+        return Promise.reject(error);
       }
       return clothingItem.findByIdAndDelete(itemId);
     })
-    .then(() => res.status(200).send({ message: "successfully deleted item" }))
+    .then(() => res.send({ message: "successfully deleted item" }))
     .catch((err) => {
       errorHandler({ err, res });
     });
@@ -66,7 +65,7 @@ const likeItem = (req, res) => {
       { new: true }
     )
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => res.send(item))
     .catch((err) => {
       errorHandler({ err, res });
     });
@@ -80,7 +79,7 @@ const dislikeItem = (req, res) => {
       { new: true }
     )
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => res.send(item))
     .catch((err) => {
       errorHandler({ err, res });
     });

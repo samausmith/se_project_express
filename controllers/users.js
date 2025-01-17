@@ -6,18 +6,12 @@ const User = require("../models/user");
 
 const errorHandler = require("../utils/errorHandler");
 
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      errorHandler({ err, res });
-    });
-};
+const { BAD_REQUEST } = require("../utils/errors");
 
 module.exports.getCurrentUser = (req, res) => {
   User.findById(req.user)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       errorHandler({ err, res });
     });
@@ -31,7 +25,7 @@ module.exports.updateUserProfile = (req, res) => {
     { new: true, runValidators: true }
   )
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       errorHandler({ err, res });
     });
@@ -42,12 +36,9 @@ module.exports.createUser = (req, res) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        return Promise.reject(
-          new Error({
-            name: "ConflictError",
-            message: "Email is already registered as user",
-          })
-        );
+        const error = new Error("Email is already registered as user");
+        error.name = "ConflictError";
+        return Promise.reject(error);
       }
       return bcrypt.hash(password, 10);
     })
@@ -62,6 +53,12 @@ module.exports.createUser = (req, res) => {
 
 module.exports.loginUser = (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "The password and email fields are required" });
+  }
 
   return User.findUserByCredentials(email, password)
     .then((user) => {

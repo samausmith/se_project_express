@@ -8,14 +8,10 @@ const {
 } = require("./errors");
 
 const errorHandler = ({ err, res }) => {
-  // console.error(err);
-  // console.error({ name: err.name });
   if (err.name === "ValidationError") {
     res.status(BAD_REQUEST).send({ message: err.message });
   } else if (err.name === "CastError") {
     res.status(BAD_REQUEST).send({ message: "Invalid ID" });
-  } else if (err.name === "Error") {
-    res.status(BAD_REQUEST).send({ message: err.message });
   } else if (err.name === "AuthorizationError") {
     res.status(UNAUTHORIZED).send({ message: "Invalid credentials" });
   } else if (err.name === "ForbiddenError") {
