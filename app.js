@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 
 const mongoose = require("mongoose");
@@ -6,6 +5,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
+require("dotenv").config();
+
 const { PORT = 3001 } = process.env;
 const mainRouter = require("./routes/index");
 
@@ -29,9 +30,9 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(requestLogger);
+// app.use(requestLogger);
 app.use("/", mainRouter);
 
-app.use(errorLogger);
-app.use(errors());
-app.use(errorHandler);
+// app.use(errorLogger);
+// app.use(errors());
+// app.use(errorHandler);
