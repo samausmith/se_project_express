@@ -10,7 +10,8 @@ require("dotenv").config();
 const { PORT = 3001 } = process.env;
 const mainRouter = require("./routes/index");
 
-const { errorHandler } = require("./middlewares/error-handler");
+// const { errorHandler } = require("./middlewares/error-handler");
+const errorHandler = require("./utils/errorHandler");
 const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
@@ -30,9 +31,9 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use(requestLogger);
+app.use(requestLogger);
 app.use("/", mainRouter);
 
-// app.use(errorLogger);
-// app.use(errors());
-// app.use(errorHandler);
+app.use(errorLogger);
+app.use(errors());
+app.use(errorHandler);

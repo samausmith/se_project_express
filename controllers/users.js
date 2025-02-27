@@ -51,7 +51,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.loginUser = (req, res) => {
+module.exports.loginUser = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -68,6 +68,6 @@ module.exports.loginUser = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      errorHandler({ err, res });
+      errorHandler({ err, res, next });
     });
 };
