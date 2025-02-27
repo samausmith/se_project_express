@@ -1,13 +1,11 @@
 const { Joi, celebrate } = require("celebrate");
 const validator = require("validator");
-const router = require("../routes");
+const router = require("express").Router();
+
 const {
-  getClothingItems,
   getClothingItem,
   createClothingItem,
   deleteClothingItem,
-  likeItem,
-  dislikeItem,
 } = require("../controllers/clothingItemController");
 
 const {
@@ -125,4 +123,12 @@ router.get(
     }),
   }),
   getCurrentUser
+);
+
+router.delete(
+  "/:itemId",
+  celebrate({
+    headers: Joi.object().keys({}).unknown(true),
+  }),
+  deleteClothingItem
 );
