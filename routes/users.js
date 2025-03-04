@@ -5,4 +5,4 @@ const { validateGetUser } = require("../middlewares/validation");
 userRouter.get("/me", validateGetUser, getCurrentUser);
 userRouter.patch("/me", validateGetUser, updateUserProfile);
 
-module.exports = userRouter;
+module.exports = userRouters;
