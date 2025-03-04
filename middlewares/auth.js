@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
-const { UNAUTHORIZED } = require("../utils/errors");
+const { UnauthorizedError } = require("../utils/errors");
 
 const handleAuthError = (res) => {
-  res.status(UNAUTHORIZED).send({ message: "Authorization error" });
+  return next(new UnauthorizedError("Authorization required"));
 };
 
 module.exports = (req, res, next) => {
@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return handleAuthError(res, req);
+    return next(new UnauthorizedError("Invalid or expired token"));
   }
 
   req.user = payload;

@@ -4,17 +4,18 @@ const { JWT_SECRET } = require("../utils/config");
 
 const User = require("../models/user");
 
-const errorHandler = require("../utils/errorHandler");
-
-const { BAD_REQUEST } = require("../utils/errors");
+const {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+  ConflictError,
+} = require("../utils/errors");
 
 module.exports.getCurrentUser = (req, res) => {
   User.findById(req.user)
-    .orFail()
+    .orFail(() => new NotFoundError("User not found"))
     .then((user) => res.send(user))
-    .catch((err) => {
-      errorHandler({ err, res });
-    });
+    .catch(next);
 };
 
 module.exports.updateUserProfile = (req, res) => {
@@ -24,10 +25,13 @@ module.exports.updateUserProfile = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .orFail()
+    .orFail(() => new NotFoundError("User not found"))
     .then((user) => res.send(user))
     .catch((err) => {
-      errorHandler({ err, res });
+      if (err.name === "ValidationError") {
+        return next(new BadRequestError("Invalid data for profile update"));
+      }
+      next(err);
     });
 };
 
@@ -36,9 +40,7 @@ module.exports.createUser = (req, res) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        const error = new Error("Email is already registered as user");
-        error.name = "ConflictError";
-        return Promise.reject(error);
+        return next(new ConflictError("Email is already registered"));
       }
       return bcrypt.hash(password, 10);
     })
@@ -47,7 +49,10 @@ module.exports.createUser = (req, res) => {
       res.status(201).send({ name, avatar, email, _id: user._id })
     )
     .catch((err) => {
-      errorHandler({ err, res });
+      if (err.name === "ValidationError") {
+        return next(new BadRequestError("Invalid data for user registration"));
+      }
+      next(err);
     });
 };
 
@@ -55,9 +60,7 @@ module.exports.loginUser = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(BAD_REQUEST)
-      .send({ message: "The password and email fields are required" });
+    return next(new BadRequestError("Email and password are required"));
   }
 
   return User.findUserByCredentials(email, password)
@@ -67,7 +70,7 @@ module.exports.loginUser = (req, res, next) => {
       });
       res.send({ token });
     })
-    .catch((err) => {
-      errorHandler({ err, res, next });
+    .catch(() => {
+      next(new UnauthorizedError("Incorrect email or password"));
     });
 };

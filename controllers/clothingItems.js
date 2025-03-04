@@ -1,25 +1,25 @@
 const clothingItem = require("../models/clothingItem");
 
-const errorHandler = require("../utils/errorHandler");
+const {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} = require("../utils/errors");
 
 const getClothingItems = (req, res) => {
   clothingItem
     .find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => {
-      errorHandler({ err, res });
-    });
+    .catch(next);
 };
 
 const getClothingItem = (req, res) => {
   const { itemId } = req.params;
   clothingItem
     .findById(itemId)
-    .orFail()
+    .orFail(() => new NotFoundError("Clothing item not found"))
     .then((item) => res.status(200).send(item))
-    .catch((err) => {
-      errorHandler({ err, res });
-    });
+    .catch(next);
 };
 
 const createClothingItem = (req, res) => {
@@ -30,8 +30,12 @@ const createClothingItem = (req, res) => {
     .create({ name, weather, imageUrl, owner })
     .then((data) => res.status(201).send(data))
     .catch((err) => {
-      console.log();
-      errorHandler({ err, res });
+      if (err.name === "ValidationError") {
+        return next(
+          new BadRequestError("Invalid data for creating a clothing item")
+        );
+      }
+      next(err);
     });
 };
 
@@ -40,21 +44,17 @@ const deleteClothingItem = (req, res) => {
 
   clothingItem
     .findById(itemId)
-    .orFail()
+    .orFail(() => new NotFoundError("Clothing item not found"))
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
-        const error = new Error(
-          "User does not have permission to delete this item"
+        return next(
+          new ForbiddenError("You do not have permission to delete this item")
         );
-        error.name = "ForbiddenError";
-        return Promise.reject(error);
       }
-      return clothingItem.findByIdAndDelete(itemId);
+      return ClothingItem.findByIdAndDelete(itemId);
     })
     .then(() => res.send({ message: "successfully deleted item" }))
-    .catch((err) => {
-      errorHandler({ err, res });
-    });
+    .catch(next);
 };
 
 const likeItem = (req, res) => {
@@ -64,11 +64,9 @@ const likeItem = (req, res) => {
       { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
       { new: true }
     )
-    .orFail()
+    .orFail(() => new NotFoundError("Clothing item not found"))
     .then((item) => res.send(item))
-    .catch((err) => {
-      errorHandler({ err, res });
-    });
+    .catch(next);
 };
 
 const dislikeItem = (req, res) => {
@@ -78,11 +76,9 @@ const dislikeItem = (req, res) => {
       { $pull: { likes: req.user._id } }, // remove _id from the array
       { new: true }
     )
-    .orFail()
+    .orFail(() => new NotFoundError("Clothing item not found"))
     .then((item) => res.send(item))
-    .catch((err) => {
-      errorHandler({ err, res });
-    });
+    .catch(next);
 };
 
 module.exports = {
