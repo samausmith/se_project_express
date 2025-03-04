@@ -1,19 +1,17 @@
 const clothingItem = require("../models/clothingItem");
 
-const {
-  BadRequestError,
-  ForbiddenError,
-  NotFoundError,
-} = require("../utils/errors");
+const { BadRequestError } = require("../utils/errors/BadRequestError");
+const { ForbiddenError } = require("../utils/errors/ForbiddenError");
+const { NotFoundError } = require("../utils/errors/NotFoundError");
 
-const getClothingItems = (req, res) => {
+const getClothingItems = (req, res, next) => {
   clothingItem
     .find({})
     .then((items) => res.status(200).send(items))
     .catch(next);
 };
 
-const getClothingItem = (req, res) => {
+const getClothingItem = (req, res, next) => {
   const { itemId } = req.params;
   clothingItem
     .findById(itemId)
@@ -22,7 +20,7 @@ const getClothingItem = (req, res) => {
     .catch(next);
 };
 
-const createClothingItem = (req, res) => {
+const createClothingItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user;
 
@@ -39,7 +37,7 @@ const createClothingItem = (req, res) => {
     });
 };
 
-const deleteClothingItem = (req, res) => {
+const deleteClothingItem = (req, res, next) => {
   const { itemId } = req.params;
 
   clothingItem
@@ -51,13 +49,13 @@ const deleteClothingItem = (req, res) => {
           new ForbiddenError("You do not have permission to delete this item")
         );
       }
-      return ClothingItem.findByIdAndDelete(itemId);
+      return clothingItem.findByIdAndDelete(itemId);
     })
     .then(() => res.send({ message: "successfully deleted item" }))
     .catch(next);
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,
@@ -69,7 +67,7 @@ const likeItem = (req, res) => {
     .catch(next);
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,

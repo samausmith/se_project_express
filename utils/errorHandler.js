@@ -1,11 +1,7 @@
-const { DEFAULT } = require("./errors");
-
-const errorHandler = ({ err, req, res, next }) => {
-  const statusCode = err.statusCode || DEFAULT;
+const errorHandler = ({ err, res, next }) => {
+  const statusCode = err.statusCode || 500;
   const message =
-    statusCode === DEFAULT
-      ? "An error has occured on the server."
-      : err.message;
+    statusCode === 500 ? "An error has occured on the server." : err.message;
   res.status(statusCode).send({ message });
 };
 

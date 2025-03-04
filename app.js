@@ -8,10 +8,10 @@ const app = express();
 require("dotenv").config();
 
 const { PORT = 3001 } = process.env;
+const { errors } = require("celebrate");
 const mainRouter = require("./routes/index");
 
 const errorHandler = require("./utils/errorHandler");
-const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 app.use(cors());
