@@ -97,7 +97,7 @@ const validateLoginUser = celebrate({
 
 const validateGetClothingItem = celebrate({
   params: Joi.object().keys({
-    itemdId: Joi.string().required(),
+    itemId: Joi.string().length(24).hex().required(),
   }),
 });
 
