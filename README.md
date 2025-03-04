@@ -13,3 +13,8 @@ The back-end of the "What to Wear" web application is responsible for handling A
 - Node.js
 - Express.js
 - MongoDB
+
+### Domains
+
+- [Frontend] (https://www.what-to-wear.jumpingcrab.com/)
+- [Backend] (https://api.what-to-wear.jumpingcrab.com/)

@@ -7,6 +7,7 @@ const { NotFoundError } = require("../utils/errors/NotFoundError");
 const getClothingItems = (req, res, next) => {
   clothingItem
     .find({})
+    .orFail(() => new NotFoundError("Clothing items not find"))
     .then((items) => res.status(200).send(items))
     .catch(next);
 };
@@ -33,7 +34,7 @@ const createClothingItem = (req, res, next) => {
           new BadRequestError("Invalid data for creating a clothing item")
         );
       }
-      next(err);
+      return next(err);
     });
 };
 

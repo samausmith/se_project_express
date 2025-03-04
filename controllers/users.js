@@ -18,7 +18,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 
 module.exports.updateUserProfile = (req, res, next) => {
   const { name, avatar } = req.body;
-  User.findByIdAndUpdate(
+  return User.findByIdAndUpdate(
     req.user,
     { name, avatar },
     { new: true, runValidators: true }
@@ -29,13 +29,13 @@ module.exports.updateUserProfile = (req, res, next) => {
       if (err.name === "ValidationError") {
         return next(new BadRequestError("Invalid data for profile update"));
       }
-      next(err);
+      return next(err);
     });
 };
 
 module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
-  User.findOne({ email })
+  return User.findOne({ email })
     .then((user) => {
       if (user) {
         return next(new ConflictError("Email is already registered"));
@@ -50,7 +50,7 @@ module.exports.createUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         return next(new BadRequestError("Invalid data for user registration"));
       }
-      next(err);
+      return next(err);
     });
 };
 
