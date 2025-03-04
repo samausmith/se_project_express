@@ -46,9 +46,7 @@ const deleteClothingItem = (req, res, next) => {
     .orFail(() => new NotFoundError("Clothing item not found"))
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
-        return next(
-          new ForbiddenError("You do not have permission to delete this item")
-        );
+          throw new ForbiddenError("You do not have permission to delete this item");
       }
       return clothingItem.findByIdAndDelete(itemId);
     })
