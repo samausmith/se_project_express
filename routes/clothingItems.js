@@ -13,12 +13,11 @@ const {
 const {
   validateCreateClothingItem,
   validateGetClothingItem,
-  validateDeleteClothingItem,
 } = require("../middlewares/validation");
 
 clothingItemRouter.get("/", getClothingItems);
 
-clothingItemRouter.get("/", validateGetClothingItem, getClothingItem);
+clothingItemRouter.get("/:itemId", validateGetClothingItem, getClothingItem);
 
 clothingItemRouter.post(
   "/",
@@ -30,7 +29,7 @@ clothingItemRouter.post(
 clothingItemRouter.delete(
   "/:itemId",
   auth,
-  validateDeleteClothingItem,
+  validateGetClothingItem,
   deleteClothingItem
 );
 
