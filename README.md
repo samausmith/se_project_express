@@ -16,5 +16,5 @@ The back-end of the "What to Wear" web application is responsible for handling A
 
 ### Domains
 
-- [Frontend] (https://www.what-to-wear.jumpingcrab.com/)
-- [Backend] (https://api.what-to-wear.jumpingcrab.com/)
+- [Frontend] (https://www.what-to-wear.uk/)
+- [Backend] (https://api.what-to-wear.uk/)
