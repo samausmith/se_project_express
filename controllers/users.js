@@ -10,7 +10,7 @@ const { NotFoundError } = require("../utils/errors/NotFoundError");
 const { ConflictError } = require("../utils/errors/ConflictError");
 
 module.exports.getCurrentUser = (req, res, next) => {
-  User.findById(req.user)
+  User.findById(req.user._id)
     .orFail(() => new NotFoundError("User not found"))
     .then((user) => res.send(user))
     .catch(next);
@@ -19,7 +19,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 module.exports.updateUserProfile = (req, res, next) => {
   const { name, avatar } = req.body;
   return User.findByIdAndUpdate(
-    req.user,
+    req.user._id,
     { name, avatar },
     { new: true, runValidators: true }
   )
